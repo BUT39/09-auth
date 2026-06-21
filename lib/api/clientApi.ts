@@ -1,7 +1,6 @@
-import axios from "axios";
-import type { Note, CreateNoteData } from "../types/note";
-
-const BASE_URL = "https://notehub-public.goit.study/api";
+import { User } from "@/types/user";
+import type { Note, CreateNoteData } from "../../types/note";
+import { axiosInstance } from "./api";
 
 export interface FetchNotesParams {
   page?: number;
@@ -13,15 +12,6 @@ export interface FetchNotesResponse {
   notes: Note[];
   totalPages: number;
 }
-
-const axiosInstance = axios.create({
-  baseURL: BASE_URL,
-});
-
-axiosInstance.interceptors.request.use((config) => {
-  config.headers.Authorization = `Bearer ${process.env.NEXT_PUBLIC_NOTEHUB_TOKEN}`;
-  return config;
-});
 
 export async function fetchNotes(
   params: FetchNotesParams = {},
@@ -48,5 +38,33 @@ export async function createNote(data: CreateNoteData): Promise<Note> {
 }
 export async function deleteNote(id: string) {
   const response = await axiosInstance.delete<Note>(`/notes/${id}`);
+  return response.data;
+}
+
+interface AuthData {
+  email: string;
+  password: string;
+}
+export async function login(data: AuthData): Promise<User> {
+  const response = await axiosInstance.post<User>("/auth/login", data);
+  return response.data;
+}
+export async function register(data: AuthData): Promise<User> {
+  const response = await axiosInstance.post<User>("/auth/register", data);
+  return response.data;
+}
+export async function logout(): Promise<void> {
+  await axiosInstance.post("/auth/logout");
+}
+export async function checkSession(): Promise<User | null> {
+  const response = await axiosInstance.get<User | null>("/auth/session");
+  return response.data;
+}
+export async function getMe(): Promise<User> {
+  const response = await axiosInstance.get<User>("/auth/me");
+  return response.data;
+}
+export async function updateMe(data: Partial<User>): Promise<User> {
+  const response = await axiosInstance.patch<User>("/auth/me", data);
   return response.data;
 }
