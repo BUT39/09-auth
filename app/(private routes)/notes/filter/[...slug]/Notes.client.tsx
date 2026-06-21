@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { fetchNotes } from "../../../../../lib/api/api";
+import { fetchNotes } from "../../../../../lib/api/clientApi";
 import css from "./Notes.module.css";
 import { useQuery } from "@tanstack/react-query";
 import { useDebouncedCallback } from "use-debounce";
